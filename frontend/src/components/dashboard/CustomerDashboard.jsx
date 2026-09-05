@@ -16,7 +16,7 @@ export default function CustomerDashboard({
       
       {/* Hero Greeting & Quick Action Hero Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+        background: 'radial-gradient(circle at 12% 15%, rgba(249, 115, 22, 0.22) 0%, transparent 45%), radial-gradient(circle at 88% 85%, rgba(37, 99, 235, 0.16) 0%, transparent 45%), linear-gradient(135deg, #0F172A 0%, #1E293B 55%, #0F172A 100%)',
         color: '#FFFFFF',
         borderRadius: '24px',
         padding: '32px 28px',
@@ -26,12 +26,13 @@ export default function CustomerDashboard({
         boxShadow: '0 12px 30px rgba(15, 23, 42, 0.2)'
       }}>
         <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(249, 115, 22, 0.2)', color: '#F97316', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700', marginBottom: '12px' }}>
-            <span>🚚 TRANSMAA LOGISTICS PLATFORM</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(249, 115, 22, 0.2)', color: '#F97316', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700', marginBottom: '12px' }}>
+            <Truck size={13} />
+            <span>Transmaa Logistics Platform</span>
           </div>
 
           <h1 className="title-lg" style={{ color: '#FFFFFF', fontSize: '1.8rem', marginBottom: '6px' }}>
-            Good morning, {user?.name || 'Customer'}! 👋
+            Good Morning, {user?.name || 'Customer'}!
           </h1>
           <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: '560px', marginBottom: '24px' }}>
             Book reliable trucks for goods & house shifting, browse verified pre-owned commercial vehicles, or apply for instant vehicle financing.
@@ -255,10 +256,10 @@ export default function CustomerDashboard({
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <h3 className="title-md">Recent Booking History</h3>
-          <button 
-            onClick={() => onNavigate('bookings')} 
+          <button
+            onClick={() => onNavigate('bookings')}
             className="btn-ghost"
-            style={{ color: '#F97316', fontWeight: '700', fontSize: '0.85rem' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#F97316', fontWeight: '700', fontSize: '0.85rem', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
             View All History <ArrowRight size={14} />
           </button>

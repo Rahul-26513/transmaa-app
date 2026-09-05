@@ -5,6 +5,7 @@ import DriverRegister from '../components/driver/DriverRegister';
 import AvailableLoads from '../components/driver/AvailableLoads';
 import MyLoads from '../components/driver/MyLoads';
 import Toast from '../components/common/Toast';
+import Footer from '../components/common/Footer';
 import * as driverApi from '../services/driverApi';
 
 export default function DriverApp() {
@@ -93,6 +94,8 @@ export default function DriverApp() {
       ) : (
         <MyLoads showToast={showToast} />
       )}
+
+      <Footer />
 
       <Toast toast={toast} onClose={() => setToast(null)} />
     </div>

@@ -9,6 +9,7 @@ import FinanceModule from '../components/finance/FinanceModule';
 import NotificationsModule from '../components/notifications/NotificationsModule';
 import NotificationDrawer from '../components/notifications/NotificationDrawer';
 import Toast from '../components/common/Toast';
+import Footer from '../components/common/Footer';
 import StaffLogin from '../components/auth/StaffLogin';
 
 import * as api from '../services/staffApi';
@@ -488,6 +489,8 @@ export default function StaffApp() {
           )}
 
         </main>
+
+        <Footer />
       </div>
 
       {/* Sliding Notification Drawer */}

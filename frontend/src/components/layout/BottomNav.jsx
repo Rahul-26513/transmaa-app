@@ -19,7 +19,7 @@ export default function BottomNav({ currentTab, setCurrentTab }) {
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#0F172A',
+        background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
         borderTop: '1px solid #1E293B',
         display: 'flex',
         justifyContent: 'space-around',

@@ -56,7 +56,7 @@ export default function Step2Schedule({ bookingData, updateBookingData, onNext, 
         </div>
         <div>
           <h3 className="title-md" style={{ margin: 0 }}>Schedule Pickup Time</h3>
-          <p className="subtitle">Step 2 of 5 — Select date & convenient slot</p>
+          <p className="subtitle">Step 2 of 5: Select date & convenient slot</p>
         </div>
       </div>
 

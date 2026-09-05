@@ -245,7 +245,7 @@ export default function BookingDetailModal({
                     width: '42px',
                     height: '42px',
                     borderRadius: '50%',
-                    backgroundColor: '#F97316',
+                    background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',

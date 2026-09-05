@@ -623,7 +623,7 @@ export default function Step5Review({
                   width: '44px',
                   height: '44px',
                   borderRadius: '10px',
-                  backgroundColor: '#F97316',
+                  background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                   color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',

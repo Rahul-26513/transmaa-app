@@ -235,7 +235,7 @@ export default function BookingFlow({
             <div
               style={{
                 height: '100%',
-                backgroundColor: '#F97316',
+                background: 'linear-gradient(90deg, #F97316 0%, #FB923C 100%)',
                 width:
                   `${(currentStep / 5) * 100}%`,
                 transition:

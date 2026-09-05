@@ -129,14 +129,17 @@ export default function DriverRegister({ onBackToLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-10 flex items-start justify-center">
+    <div
+      className="min-h-screen px-4 py-10 flex items-start justify-center"
+      style={{ background: 'radial-gradient(circle at 15% 20%, rgba(249, 115, 22, 0.16) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(37, 99, 235, 0.14) 0%, transparent 45%), linear-gradient(160deg, #020617 0%, #0F172A 55%, #020617 100%)' }}
+    >
       <div className="w-full max-w-[480px]">
         <div className="text-center mb-6">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center shadow-lg shadow-orange-500/30 mx-auto mb-3">
             <Truck className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-xl font-extrabold text-white tracking-tight">
-            "Unlock Your Journey" — Register Today
+            Register as a Transmaa Driver
           </h1>
         </div>
 
@@ -153,7 +156,7 @@ export default function DriverRegister({ onBackToLogin }) {
           {step === 1 && (
             <form onSubmit={handleSendOtp}>
               <h3 className="title-md" style={{ marginBottom: '4px' }}>Registration</h3>
-              <p className="subtitle" style={{ marginBottom: '20px' }}>Step 1 — Verify your mobile number</p>
+              <p className="subtitle" style={{ marginBottom: '20px' }}>Step 1: Verify your mobile number</p>
 
               <div className="form-group">
                 <label className="form-label">Mobile Number</label>
@@ -325,7 +328,7 @@ export default function DriverRegister({ onBackToLogin }) {
               </div>
 
               <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label className="form-label">Pan Card Number</label>
+                <label className="form-label">PAN Card Number</label>
                 <input type="text" className="form-input" value={experience.panNumber}
                   onChange={(e) => setExperience({ ...experience, panNumber: e.target.value.toUpperCase() })} required />
               </div>
@@ -344,7 +347,7 @@ export default function DriverRegister({ onBackToLogin }) {
           {step === 4 && (
             <div>
               <h3 className="title-md" style={{ marginBottom: '4px' }}>Check Details</h3>
-              <p className="subtitle" style={{ marginBottom: '20px' }}>Step 4 of 4 — Review before submitting</p>
+              <p className="subtitle" style={{ marginBottom: '20px' }}>Step 4 of 4: Review before submitting</p>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

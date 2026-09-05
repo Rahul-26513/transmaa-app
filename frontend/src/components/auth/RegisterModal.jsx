@@ -128,11 +128,12 @@ export default function RegisterModal({
               <h3
                 className="title-md"
                 style={{
+                  fontFamily: "'Poppins', sans-serif",
                   fontSize: '1.1rem',
                   margin: 0
                 }}
               >
-                Create Transmaa Account
+                Create Tran<span style={{ color: '#F97316' }}>Smaa</span> Account
               </h3>
 
               <p

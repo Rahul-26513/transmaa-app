@@ -173,7 +173,7 @@ export default function Step3Goods({
           </h3>
 
           <p className="subtitle">
-            Step 3 of 5 — Pick cargo type & enter
+            Step 3 of 5: Pick cargo type & enter
             load details
           </p>
         </div>

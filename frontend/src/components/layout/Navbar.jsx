@@ -11,7 +11,7 @@ export default function Navbar({
 }) {
   return (
     <header style={{
-      backgroundColor: '#0F172A',
+      background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
       color: '#FFFFFF',
       position: 'sticky',
       top: 0,
@@ -19,32 +19,33 @@ export default function Navbar({
       borderBottom: '1px solid #1E293B',
       boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
     }}>
-      <div className="content-wrapper" style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        
+      <div className="content-wrapper" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+
         {/* Brand Logo & Tag */}
-        <div 
+        <div
           onClick={() => setCurrentTab('home')}
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0, minWidth: 0 }}
         >
           <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
+            width: '36px',
+            height: '36px',
+            borderRadius: '10px',
             background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)'
+            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)',
+            flexShrink: 0
           }}>
-            <Truck size={24} color="#FFFFFF" />
+            <Truck size={20} color="#FFFFFF" />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
-                TRANSMAA
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+              <span className="brand-wordmark" style={{ fontFamily: "'Poppins', sans-serif", fontSize: '1.15rem', fontWeight: '800', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
+                Tran<span style={{ color: '#F97316' }}>Smaa</span>
               </span>
-              <span style={{
-                backgroundColor: '#F97316',
+              <span className="brand-badge" style={{
+                background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                 color: '#FFFFFF',
                 fontSize: '0.65rem',
                 fontWeight: '800',
@@ -55,14 +56,14 @@ export default function Navbar({
                 LOGISTICS
               </span>
             </div>
-            <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, fontWeight: 500 }}>
+            <p className="brand-tagline" style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, fontWeight: 500, whiteSpace: 'nowrap' }}>
               Smart Truck Booking & Vehicle Trading
             </p>
           </div>
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="desktop-nav" style={{ display: 'none', gap: '8px' }}>
+        <nav className="desktop-nav" style={{ display: 'none', gap: '4px', flex: '1 1 0%', minWidth: 0, justifyContent: 'center', overflowX: 'auto', scrollbarWidth: 'none' }}>
           {[
             { id: 'home', label: 'Home' },
             { id: 'book-truck', label: 'Book Truck' },
@@ -77,15 +78,17 @@ export default function Navbar({
                 key={item.id}
                 onClick={() => setCurrentTab(item.id)}
                 style={{
-                  padding: '8px 16px',
+                  padding: '8px 12px',
                   borderRadius: '8px',
                   border: 'none',
                   backgroundColor: isActive ? '#F97316' : 'transparent',
                   color: isActive ? '#FFFFFF' : '#94A3B8',
                   fontWeight: isActive ? '700' : '600',
-                  fontSize: '0.9rem',
+                  fontSize: '0.85rem',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 {item.label}
@@ -95,12 +98,28 @@ export default function Navbar({
         </nav>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          {/* Support HotLine badge */}
-          <div style={{ display: 'none', alignItems: 'center', gap: '6px', color: '#94A3B8', fontSize: '0.85rem' }} className="hotline-badge">
-            <PhoneCall size={15} color="#F97316" />
-            <span>24/7 Support: <strong>1800-TRANSMAA</strong></span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {/* Support Hotline */}
+          <a
+            href="tel:1800-TRANSMAA"
+            aria-label="24x7 Support Hotline: 1800-TRANSMAA"
+            title="24x7 Support Hotline: 1800-TRANSMAA"
+            className="hotline-btn"
+            style={{
+              backgroundColor: '#1E293B',
+              border: '1px solid #334155',
+              color: '#FFFFFF',
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              textDecoration: 'none'
+            }}
+          >
+            <PhoneCall size={16} color="#F97316" />
+          </a>
 
           {/* Notifications Button */}
           <button
@@ -110,14 +129,15 @@ export default function Navbar({
               backgroundColor: '#1E293B',
               border: '1px solid #334155',
               color: '#FFFFFF',
-              width: '40px',
-              height: '40px',
+              width: '36px',
+              height: '36px',
               borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              flexShrink: 0
             }}
             title="Notifications"
           >
@@ -127,7 +147,7 @@ export default function Navbar({
                 position: 'absolute',
                 top: '-4px',
                 right: '-4px',
-                backgroundColor: '#F97316',
+                background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                 color: '#FFFFFF',
                 fontSize: '0.68rem',
                 fontWeight: '800',
@@ -164,7 +184,7 @@ export default function Navbar({
                 width: '28px',
                 height: '28px',
                 borderRadius: '50%',
-                backgroundColor: '#F97316',
+                background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
@@ -174,7 +194,7 @@ export default function Navbar({
               }}>
                 {user.name ? user.name[0] : 'C'}
               </div>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+              <span className="auth-text" style={{ fontSize: '0.85rem', fontWeight: '600', whiteSpace: 'nowrap' }}>
                 {user.name || user.phone}
               </span>
             </button>
@@ -182,10 +202,10 @@ export default function Navbar({
             <button
               onClick={onOpenAuth}
               className="btn btn-primary btn-sm"
-              style={{ padding: '8px 16px', borderRadius: '10px' }}
+              style={{ padding: '8px 16px', borderRadius: '10px', whiteSpace: 'nowrap' }}
             >
               <LogIn size={16} />
-              <span>Login / Register</span>
+              <span className="auth-text">Login / Register</span>
             </button>
           )}
 
@@ -194,12 +214,36 @@ export default function Navbar({
       </div>
 
       <style>{`
+        .brand-tagline, .brand-badge {
+          display: none;
+        }
+        .hotline-btn {
+          display: none;
+        }
+        .auth-text {
+          display: none;
+        }
+        @media (min-width: 480px) {
+          .brand-badge {
+            display: inline-block;
+          }
+          .auth-text {
+            display: inline;
+          }
+        }
+        @media (min-width: 640px) {
+          .hotline-btn {
+            display: flex;
+          }
+        }
         @media (min-width: 1024px) {
           .desktop-nav {
             display: flex !important;
           }
-          .hotline-badge {
-            display: flex !important;
+        }
+        @media (min-width: 1280px) {
+          .brand-tagline {
+            display: block;
           }
         }
       `}</style>

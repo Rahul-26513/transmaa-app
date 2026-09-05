@@ -46,12 +46,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background-color: var(--bg-light);
   color: var(--text-main);
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Scrollbar Styling */

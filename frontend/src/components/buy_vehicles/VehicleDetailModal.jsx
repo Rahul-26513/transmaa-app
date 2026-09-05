@@ -64,7 +64,7 @@ export default function VehicleDetailModal({ vehicle, onClose, showToast }) {
                 height: '320px',
                 borderRadius: '16px',
                 overflow: 'hidden',
-                backgroundColor: '#0F172A',
+                background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
                 marginBottom: '10px'
               }}>
                 <img
@@ -175,7 +175,7 @@ export default function VehicleDetailModal({ vehicle, onClose, showToast }) {
               onClick={() => setShowEnquiryForm(true)}
               className="btn btn-primary btn-full btn-lg"
             >
-              <Send size={18} /> I'm Interested — Request Callback
+              <Send size={18} /> Request a Callback
             </button>
           ) : enquirySuccess ? (
             <div style={{

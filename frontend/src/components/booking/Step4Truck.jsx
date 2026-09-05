@@ -53,7 +53,7 @@ export default function Step4Truck({ bookingData, updateBookingData, onNext, onB
         </div>
         <div>
           <h3 className="title-md" style={{ margin: 0 }}>Select Vehicle / Truck Type</h3>
-          <p className="subtitle">Step 4 of 5 — Choose optimal payload capacity</p>
+          <p className="subtitle">Step 4 of 5: Choose optimal payload capacity</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export default function Step4Truck({ bookingData, updateBookingData, onNext, onB
                       position: 'absolute',
                       top: 4,
                       right: 4,
-                      backgroundColor: '#F97316',
+                      background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
                       color: '#FFFFFF',
                       borderRadius: '50%',
                       padding: '2px'

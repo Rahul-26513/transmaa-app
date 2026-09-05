@@ -3,9 +3,11 @@ import Navbar from '../components/layout/Navbar';
 import BottomNav from '../components/layout/BottomNav';
 import NotificationDrawer from '../components/common/NotificationDrawer';
 import Toast from '../components/common/Toast';
+import Footer from '../components/common/Footer';
 import LoginModal from '../components/auth/LoginModal';
 import RegisterModal from '../components/auth/RegisterModal';
 import CustomerDashboard from '../components/dashboard/CustomerDashboard';
+import CustomerWelcome from '../components/dashboard/CustomerWelcome';
 import BookingFlow from '../components/booking/BookingFlow';
 import BookingList from '../components/bookings_history/BookingList';
 import BookingDetailModal from '../components/bookings_history/BookingDetailModal';
@@ -113,13 +115,20 @@ export default function CustomerApp() {
 
       <main>
         {currentTab === 'home' && (
-          <CustomerDashboard
-            user={user}
-            onNavigate={handleNavigate}
-            activeBooking={activeBooking}
-            recentBookings={bookings}
-            onOpenBookingDetail={setSelectedBooking}
-          />
+          user ? (
+            <CustomerDashboard
+              user={user}
+              onNavigate={handleNavigate}
+              activeBooking={activeBooking}
+              recentBookings={bookings}
+              onOpenBookingDetail={setSelectedBooking}
+            />
+          ) : (
+            <CustomerWelcome
+              onNavigate={handleNavigate}
+              onOpenAuth={() => setIsLoginOpen(true)}
+            />
+          )
         )}
 
         {currentTab === 'book-truck' && (
@@ -170,6 +179,8 @@ export default function CustomerApp() {
           />
         )}
       </main>
+
+      <Footer />
 
       <BottomNav currentTab={currentTab} setCurrentTab={handleNavigate} />
 

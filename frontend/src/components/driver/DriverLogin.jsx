@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Truck, Smartphone, ArrowRight, ShieldCheck, KeyRound, ArrowLeft } from 'lucide-react';
 import * as driverApi from '../../services/driverApi';
+import Footer from '../common/Footer';
 
 export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
   const [step, setStep] = useState('phone');
@@ -75,13 +76,16 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: 'radial-gradient(circle at 15% 20%, rgba(249, 115, 22, 0.16) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(37, 99, 235, 0.14) 0%, transparent 45%), linear-gradient(160deg, #020617 0%, #0F172A 55%, #020617 100%)' }}
+    >
       <div className="w-full max-w-[420px]">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#F7931E] flex items-center justify-center shadow-lg shadow-orange-500/30 mx-auto mb-4">
             <Truck className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
+          <h1 className="font-brand text-2xl font-extrabold text-white tracking-tight">
             Tran<span className="text-[#FF6B35]">Smaa</span>
           </h1>
           <p className="text-xs uppercase font-semibold text-slate-400 tracking-wider mt-1">
@@ -214,6 +218,8 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
             Transmaa Driver Verification
           </div>
         </div>
+
+        <Footer dark />
       </div>
     </div>
   );

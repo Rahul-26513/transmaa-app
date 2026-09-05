@@ -56,7 +56,7 @@ export default function VehicleGrid({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
             <ShoppingBag size={24} color="#F97316" />
             <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#F97316', letterSpacing: '0.05em' }}>
-              TRANSMAA MARKETPLACE
+              Transmaa Marketplace
             </span>
           </div>
           <h2 className="title-lg" style={{ color: '#FFFFFF', margin: 0 }}>
@@ -134,7 +134,7 @@ export default function VehicleGrid({
               style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
             >
               {/* Image Banner */}
-              <div style={{ height: '180px', position: 'relative', backgroundColor: '#0F172A' }}>
+              <div style={{ height: '180px', position: 'relative', background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)' }}>
                 {vehicle.photos?.[0] ? (
                   <img
                     src={vehicle.photos[0]}

@@ -65,7 +65,10 @@ export default function Sidebar({
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-slate-900 text-slate-300">
+    <div
+      className="flex flex-col h-full text-slate-300"
+      style={{ background: 'linear-gradient(180deg, #1E293B 0%, #0F172A 100%)' }}
+    >
       {/* Brand Header */}
       <div className="flex items-center justify-between h-16 px-4 bg-slate-950 border-b border-slate-800">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => handleSelectModule('orders')}>
@@ -73,7 +76,7 @@ export default function Sidebar({
             <Truck className="w-6 h-6" />
           </div>
           <div className="hidden lg:block md:group-hover:block">
-            <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1">
+            <h1 className="font-brand text-xl font-extrabold tracking-tight text-white flex items-center gap-1">
               Tran<span className="text-[#FF6B35]">Smaa</span>
             </h1>
             <p className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Ops Console</p>

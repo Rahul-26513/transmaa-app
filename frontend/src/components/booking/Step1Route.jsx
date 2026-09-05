@@ -62,7 +62,7 @@ export default function Step1Route({ bookingData, updateBookingData, onNext }) {
         </div>
         <div>
           <h3 className="title-md" style={{ margin: 0 }}>Select Pickup & Delivery Route</h3>
-          <p className="subtitle">Step 1 of 5 — Enter location details</p>
+          <p className="subtitle">Step 1 of 5: Enter location details</p>
         </div>
       </div>
 

@@ -98,11 +98,12 @@ export default function LoginModal({
               <h3
                 className="title-md"
                 style={{
+                  fontFamily: "'Poppins', sans-serif",
                   fontSize: '1.1rem',
                   margin: 0
                 }}
               >
-                Transmaa Login
+                Tran<span style={{ color: '#F97316' }}>Smaa</span> Login
               </h3>
 
               <p
