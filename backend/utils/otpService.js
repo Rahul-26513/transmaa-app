@@ -17,7 +17,7 @@ function maskEmail(email) {
   return `${user.slice(0, 2)}${"*".repeat(Math.max(user.length - 2, 1))}@${domain}`;
 }
 
-async function issueOtp(phone, email) {
+async function issueOtp(phone, email, context = {}) {
   const otp = generateOtp();
   const otpHash = await bcrypt.hash(otp, 10);
 
@@ -29,7 +29,7 @@ async function issueOtp(phone, email) {
     expiresAt: new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000)
   });
 
-  const result = await sendOtpEmail(email, otp);
+  const result = await sendOtpEmail(email, otp, context);
 
   return { ...result, maskedEmail: maskEmail(email) };
 }

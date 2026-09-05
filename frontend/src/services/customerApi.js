@@ -58,11 +58,11 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
 export const register = (name, phone, email) =>
   request('/api/customer/auth/register', { method: 'POST', body: { name, phone, email }, auth: false });
 
-export const requestOtp = (phone) =>
-  request('/api/customer/auth/request-otp', { method: 'POST', body: { phone }, auth: false });
+export const requestOtp = (identifier) =>
+  request('/api/customer/auth/request-otp', { method: 'POST', body: identifier, auth: false });
 
-export const verifyOtp = (phone, otp) =>
-  request('/api/customer/auth/verify-otp', { method: 'POST', body: { phone, otp }, auth: false });
+export const verifyOtp = (identifier, otp) =>
+  request('/api/customer/auth/verify-otp', { method: 'POST', body: { ...identifier, otp }, auth: false });
 
 export const getMe = () => request('/api/customer/auth/me');
 

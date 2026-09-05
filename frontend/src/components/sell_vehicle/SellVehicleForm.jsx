@@ -29,7 +29,7 @@ export default function SellVehicleForm({ user, onOpenAuth, onVehicleSubmitted, 
   const samplePhotoUrls = {
     front: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80',
     back: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=600&q=80',
-    left: 'https://images.unsplash.com/photo-1586191582056-a05e26b1df30?auto=format&fit=crop&w=600&q=80',
+    left: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Tata_Ace_Mini_Truck_%281%29.JPG/960px-Tata_Ace_Mini_Truck_%281%29.JPG',
     right: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=600&q=80'
   };
 

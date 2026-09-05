@@ -4,12 +4,19 @@ import {
   MapPin, Calendar, Clock, ArrowRight, Shield, RefreshCw 
 } from 'lucide-react';
 
-export default function CustomerDashboard({ 
-  user, 
-  onNavigate, 
-  activeBooking, 
-  recentBookings, 
-  onOpenBookingDetail 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 17) return 'Good Afternoon';
+  return 'Good Evening';
+}
+
+export default function CustomerDashboard({
+  user,
+  onNavigate,
+  activeBooking,
+  recentBookings,
+  onOpenBookingDetail
 }) {
   return (
     <div className="content-wrapper">
@@ -32,7 +39,7 @@ export default function CustomerDashboard({
           </div>
 
           <h1 className="title-lg" style={{ color: '#FFFFFF', fontSize: '1.8rem', marginBottom: '6px' }}>
-            Good Morning, {user?.name || 'Customer'}!
+            {getGreeting()}, {user?.name || 'Customer'}!
           </h1>
           <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: '560px', marginBottom: '24px' }}>
             Book reliable trucks for goods & house shifting, browse verified pre-owned commercial vehicles, or apply for instant vehicle financing.

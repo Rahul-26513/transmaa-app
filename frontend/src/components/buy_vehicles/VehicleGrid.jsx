@@ -140,12 +140,19 @@ export default function VehicleGrid({
                     src={vehicle.photos[0]}
                     alt={vehicle.makeModel}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
                   />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ShoppingBag size={40} color="#334155" />
-                  </div>
-                )}
+                ) : null}
+                <div style={{
+                  width: '100%', height: '100%',
+                  display: vehicle.photos?.[0] ? 'none' : 'flex',
+                  alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <ShoppingBag size={40} color="#334155" />
+                </div>
 
                 <div style={{
                   position: 'absolute',

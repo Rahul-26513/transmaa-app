@@ -3,6 +3,7 @@ const Driver = require("../models/Driver");
 const generateToken = require("../utils/generateToken");
 const asyncHandler = require("../utils/asyncHandler");
 const { issueOtp, verifyOtp } = require("../utils/otpService");
+const { getOtpRequestWarning } = require("../middleware/rateLimiter");
 
 function publicDriver(user, driver) {
   return {
@@ -87,24 +88,29 @@ exports.register = asyncHandler(async (req, res) => {
 // ==========================================
 
 exports.requestOtp = asyncHandler(async (req, res) => {
-  const { phone } = req.body;
+  const { phone, email } = req.body;
 
-  if (!phone) {
-    return res.status(400).json({ message: "Phone number is required" });
+  if (!phone && !email) {
+    return res.status(400).json({ message: "Phone number or email is required" });
   }
 
-  const user = await User.findOne({ phone, role: "driver" });
+  const user = await User.findOne(phone ? { phone, role: "driver" } : { email, role: "driver" });
 
   if (!user) {
-    return res.status(404).json({ message: "This phone number is not registered. Please register." });
+    return res.status(404).json({ message: "This account is not registered. Please register." });
   }
 
-  const result = await issueOtp(phone, user.email);
+  if (email && !user.email) {
+    return res.status(404).json({ message: "This account is not registered. Please register." });
+  }
+
+  const result = await issueOtp(phone || email, user.email, { role: "driver", name: user.name });
 
   res.status(200).json({
     message: "OTP sent to your registered email",
     emailDelivered: result.delivered,
-    maskedEmail: result.maskedEmail
+    maskedEmail: result.maskedEmail,
+    warning: getOtpRequestWarning(req)
   });
 });
 
@@ -113,19 +119,19 @@ exports.requestOtp = asyncHandler(async (req, res) => {
 // ==========================================
 
 exports.verifyLoginOtp = asyncHandler(async (req, res) => {
-  const { phone, otp } = req.body;
+  const { phone, email, otp } = req.body;
 
-  if (!phone || !otp) {
-    return res.status(400).json({ message: "Phone and OTP are required" });
+  if ((!phone && !email) || !otp) {
+    return res.status(400).json({ message: "Phone or email, and OTP are required" });
   }
 
-  const user = await User.findOne({ phone, role: "driver" });
+  const user = await User.findOne(phone ? { phone, role: "driver" } : { email, role: "driver" });
 
   if (!user) {
-    return res.status(404).json({ message: "This phone number is not registered. Please register." });
+    return res.status(404).json({ message: "This account is not registered. Please register." });
   }
 
-  const result = await verifyOtp(phone, otp);
+  const result = await verifyOtp(phone || email, otp);
 
   if (!result.valid) {
     return res.status(result.tooManyAttempts ? 429 : 401).json({ message: result.message });

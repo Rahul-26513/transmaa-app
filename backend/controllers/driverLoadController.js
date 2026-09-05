@@ -55,6 +55,26 @@ exports.acceptLoad = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Load accepted successfully", booking });
 });
 
+exports.markOnTheWay = asyncHandler(async (req, res) => {
+  const driver = await getDriverProfile(req, res);
+  if (!driver) return;
+
+  const booking = await Booking.findOne({ _id: req.params.id, driverId: driver._id });
+
+  if (!booking) {
+    return res.status(404).json({ message: "Load not found" });
+  }
+
+  if (booking.status !== "driver_accepted") {
+    return res.status(409).json({ message: "Load must be accepted before it can be marked on the way" });
+  }
+
+  booking.status = "on_the_way";
+  await booking.save();
+
+  res.status(200).json({ message: "Load marked as on the way", booking });
+});
+
 exports.getMyLoads = asyncHandler(async (req, res) => {
   const driver = await getDriverProfile(req, res);
   if (!driver) return;

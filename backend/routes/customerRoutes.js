@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
-const { otpRequestLimiter, otpVerifyLimiter } = require("../middleware/rateLimiter");
+const { otpEmailRequestLimiter, otpVerifyLimiter } = require("../middleware/rateLimiter");
 
 const authController = require("../controllers/customerAuthController");
 const bookingController = require("../controllers/customerBookingController");
@@ -14,7 +14,7 @@ const enquiryController = require("../controllers/customerEnquiryController");
 // ==========================================
 
 router.post("/auth/register", authController.register);
-router.post("/auth/request-otp", otpRequestLimiter, authController.requestOtp);
+router.post("/auth/request-otp", otpEmailRequestLimiter, authController.requestOtp);
 router.post("/auth/verify-otp", otpVerifyLimiter, authController.verifyLoginOtp);
 router.get("/auth/me", auth, authController.getMe);
 router.put("/auth/profile", auth, authController.updateProfile);

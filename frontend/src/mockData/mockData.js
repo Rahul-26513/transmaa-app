@@ -89,7 +89,7 @@ export const TRUCK_TYPES = [
     availability: 'Available Nearby (5 mins away)',
     basePrice: 1200,
     perKmPrice: 22,
-    image: 'https://images.unsplash.com/photo-1586191582056-a05e26b1df30?auto=format&fit=crop&w=600&q=80',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Tata_Ace_Mini_Truck_%281%29.JPG/960px-Tata_Ace_Mini_Truck_%281%29.JPG',
     badge: 'Popular for City'
   },
   {
@@ -102,7 +102,7 @@ export const TRUCK_TYPES = [
     availability: 'Available Nearby (10 mins away)',
     basePrice: 2100,
     perKmPrice: 32,
-    image: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Loaded_pickup_truck_Memphis_TN_2013-04-07_002.jpg/960px-Loaded_pickup_truck_Memphis_TN_2013-04-07_002.jpg',
     badge: 'Most Booked'
   },
   {
@@ -141,7 +141,7 @@ export const TRUCK_TYPES = [
     availability: 'Scheduled Booking',
     basePrice: 12500,
     perKmPrice: 95,
-    image: 'https://images.unsplash.com/photo-1501700493788-df30413429c8?auto=format&fit=crop&w=600&q=80',
+    image: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Truck_at_Highway_of_Hyderabad_2.jpg/960px-Truck_at_Highway_of_Hyderabad_2.jpg',
     badge: 'Bulk Freight'
   }
 ];

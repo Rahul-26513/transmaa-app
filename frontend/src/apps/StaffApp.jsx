@@ -15,8 +15,7 @@ import StaffLogin from '../components/auth/StaffLogin';
 import * as api from '../services/staffApi';
 import { getToken, getStoredStaff, clearSession } from '../services/staffApi';
 import { mapBooking, mapPendingDriver, mapVerifiedDriver, mapVehicle, mapEnquiry } from '../utils/staffMappers';
-
-import { INITIAL_NOTIFICATIONS } from '../mockData/staffMockData';
+import { relativeTime } from '../utils/format';
 
 export default function StaffApp() {
   // Auth State
@@ -42,7 +41,7 @@ export default function StaffApp() {
   const [driversRaw, setDriversRaw] = useState([]);
   const [vehiclesRaw, setVehiclesRaw] = useState([]);
   const [enquiriesRaw, setEnquiriesRaw] = useState([]);
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  const [readNotificationIds, setReadNotificationIds] = useState(() => new Set());
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Helper Toast Trigger
@@ -148,6 +147,69 @@ export default function StaffApp() {
   );
 
   const enquiries = useMemo(() => enquiriesRaw.map(mapEnquiry), [enquiriesRaw]);
+
+  // ==========================================
+  // NOTIFICATIONS (derived live from real data)
+  // ==========================================
+  const notifications = useMemo(() => {
+    const items = [];
+
+    bookingsRaw
+      .filter((b) => b.status === 'waiting')
+      .forEach((b) => items.push({
+        id: `order-${b._id}`,
+        type: 'order',
+        title: 'New load request',
+        message: `${b.customerName} requested a ${b.truckType || 'truck'} from ${b.fromLocation} to ${b.toLocation}.`,
+        createdAt: b.createdAt,
+        module: 'orders',
+        tab: 'waiting'
+      }));
+
+    driversRaw
+      .filter((d) => d.verificationStatus === 'pending')
+      .forEach((d) => items.push({
+        id: `driver-${d._id}`,
+        type: 'driver',
+        title: 'New driver registration',
+        message: `${d.name} registered and is awaiting verification.`,
+        createdAt: d.createdAt,
+        module: 'drivers',
+        tab: 'pending'
+      }));
+
+    vehiclesRaw
+      .filter((v) => v.status === 'pending')
+      .forEach((v) => items.push({
+        id: `listing-${v._id}`,
+        type: 'listing',
+        title: 'New vehicle listing',
+        message: `${v.sellerName} listed a ${v.makeModel} for sale.`,
+        createdAt: v.createdAt,
+        module: 'buysell',
+        tab: 'pending'
+      }));
+
+    enquiriesRaw
+      .filter((e) => e.status === 'pending')
+      .forEach((e) => items.push({
+        id: `finance-${e._id}`,
+        type: 'finance',
+        title: 'New finance & insurance enquiry',
+        message: `${e.name} submitted a ${e.enquiryType || 'finance/insurance'} enquiry.`,
+        createdAt: e.createdAt,
+        module: 'finance',
+        tab: 'all'
+      }));
+
+    return items
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((item) => ({
+        ...item,
+        time: relativeTime(item.createdAt),
+        unread: !readNotificationIds.has(item.id)
+      }));
+  }, [bookingsRaw, driversRaw, vehiclesRaw, enquiriesRaw, readNotificationIds]);
 
   // ==========================================
   // ORDERS MODULE ACTIONS
@@ -284,13 +346,15 @@ export default function StaffApp() {
   // NOTIFICATIONS ACTIONS
   // ==========================================
   const handleMarkAsRead = (notifId) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notifId ? { ...n, unread: false } : n))
-    );
+    setReadNotificationIds((prev) => new Set(prev).add(notifId));
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setReadNotificationIds((prev) => {
+      const next = new Set(prev);
+      notifications.forEach((n) => next.add(n.id));
+      return next;
+    });
     showToast(`All notifications marked as read.`, 'info');
   };
 

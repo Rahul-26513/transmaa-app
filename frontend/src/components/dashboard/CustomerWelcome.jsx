@@ -60,7 +60,7 @@ export default function CustomerWelcome({ onNavigate, onOpenAuth }) {
         </div>
 
         <h1 className="title-lg" style={{ color: '#FFFFFF', fontSize: '2.1rem', marginBottom: '12px', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-          Move Your Goods, Buy or Sell a Truck, All in One Place
+          Move Your Goods, Buy or Sell Any Vehicle, All in One Place
         </h1>
 
         <p style={{ color: '#94A3B8', fontSize: '1rem', maxWidth: '560px', margin: '0 auto 28px auto', lineHeight: '1.6' }}>

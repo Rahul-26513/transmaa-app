@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Package, CheckCheck, Truck } from 'lucide-react';
+import { Package, CheckCheck, Truck, Eye, Navigation } from 'lucide-react';
 import * as driverApi from '../../services/driverApi';
 import { formatDateTime } from '../../utils/format';
+import LoadDetailModal from './LoadDetailModal';
 
 const STATUS_LABEL = {
   driver_accepted: 'Accepted',
@@ -12,6 +13,7 @@ const STATUS_LABEL = {
 export default function MyLoads({ showToast }) {
   const [loads, setLoads] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedLoad, setSelectedLoad] = useState(null);
 
   const loadMine = () => {
     setIsLoading(true);
@@ -26,10 +28,22 @@ export default function MyLoads({ showToast }) {
     loadMine();
   }, []);
 
+  const handleStartTrip = async (id) => {
+    try {
+      await driverApi.markOnTheWay(id);
+      showToast('Load marked as on the way', 'success');
+      setSelectedLoad(null);
+      loadMine();
+    } catch (err) {
+      showToast(err.message || 'Failed to update status', 'error');
+    }
+  };
+
   const handleDeliver = async (id) => {
     try {
       await driverApi.markDelivered(id);
       showToast('Load marked as delivered', 'success');
+      setSelectedLoad(null);
       loadMine();
     } catch (err) {
       showToast(err.message || 'Failed to mark delivered', 'error');
@@ -57,7 +71,7 @@ export default function MyLoads({ showToast }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {loads.map((load) => (
-          <div key={load._id} className="card">
+          <div key={load._id} className="card card-clickable" onClick={() => setSelectedLoad(load)}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
               <span className={`badge ${load.status === 'delivered' ? 'badge-delivered' : 'badge-ontheway'}`}>
                 {STATUS_LABEL[load.status] || load.status}
@@ -72,14 +86,47 @@ export default function MyLoads({ showToast }) {
               Goods: {load.goodsType} • Customer: {load.customerName} ({load.customerPhone})
             </p>
 
-            {load.status === 'on_the_way' && (
-              <button onClick={() => handleDeliver(load._id)} className="btn btn-primary btn-full" style={{ marginTop: '14px' }}>
-                <CheckCheck size={16} /> Delivered
+            <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedLoad(load); }}
+                className="btn btn-outline"
+                style={{ flex: 1 }}
+              >
+                <Eye size={16} /> View Details
               </button>
-            )}
+
+              {load.status === 'driver_accepted' && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleStartTrip(load._id); }}
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                >
+                  <Navigation size={16} /> Start Trip
+                </button>
+              )}
+
+              {load.status === 'on_the_way' && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDeliver(load._id); }}
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                >
+                  <CheckCheck size={16} /> Delivered
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
+
+      {selectedLoad && (
+        <LoadDetailModal
+          load={selectedLoad}
+          onClose={() => setSelectedLoad(null)}
+          onStartTrip={handleStartTrip}
+          onDeliver={handleDeliver}
+        />
+      )}
     </div>
   );
 }

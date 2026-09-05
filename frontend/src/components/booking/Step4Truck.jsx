@@ -92,11 +92,21 @@ export default function Step4Truck({ bookingData, updateBookingData, onNext, onB
                   flexShrink: 0,
                   position: 'relative'
                 }}>
-                  <img 
-                    src={truck.image} 
-                    alt={truck.name} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  <img
+                    src={truck.image}
+                    alt={truck.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
                   />
+                  <div style={{
+                    display: 'none', width: '100%', height: '100%',
+                    alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <Truck size={28} color="#94A3B8" />
+                  </div>
                   {isSelected && (
                     <div style={{
                       position: 'absolute',

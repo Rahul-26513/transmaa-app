@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Truck,
   Smartphone,
+  Mail,
   ArrowRight,
   X,
   ShieldCheck
@@ -15,8 +16,10 @@ export default function LoginModal({
   onLoginSuccess,
   onOpenRegister
 }) {
+  const [loginMode, setLoginMode] = useState('phone'); // phone | email
   const [step, setStep] = useState('phone');
   const [mobileNumber, setMobileNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -28,14 +31,19 @@ export default function LoginModal({
   const handleSendOtp = (e) => {
     e.preventDefault();
 
-    if (
-      !mobileNumber ||
-      mobileNumber.length !== 10 ||
-      !/^\d+$/.test(mobileNumber)
-    ) {
-      setError(
-        'Please enter a valid 10-digit mobile number.'
-      );
+    if (loginMode === 'phone') {
+      if (
+        !mobileNumber ||
+        mobileNumber.length !== 10 ||
+        !/^\d+$/.test(mobileNumber)
+      ) {
+        setError(
+          'Please enter a valid 10-digit mobile number.'
+        );
+        return;
+      }
+    } else if (!email.includes('@')) {
+      setError('Please enter a valid email address.');
       return;
     }
 
@@ -50,9 +58,12 @@ export default function LoginModal({
   const handleReset = () => {
     setStep('phone');
     setMobileNumber('');
+    setEmail('');
     setError('');
     onClose();
   };
+
+  const identifier = loginMode === 'phone' ? { phone: mobileNumber } : { email };
 
   return (
     <div className="modal-overlay">
@@ -176,7 +187,7 @@ export default function LoginModal({
                     color: '#0F172A'
                   }}
                 >
-                  Enter Mobile Number
+                  {loginMode === 'phone' ? 'Enter Mobile Number' : 'Enter Email Address'}
                 </h4>
 
                 <p
@@ -190,6 +201,39 @@ export default function LoginModal({
                   verify your account
                 </p>
 
+              </div>
+
+              {/* Mode toggle */}
+
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', backgroundColor: '#F1F5F9', padding: '4px', borderRadius: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setLoginMode('phone'); setError(''); }}
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                    fontSize: '0.82rem', fontWeight: 700,
+                    backgroundColor: loginMode === 'phone' ? '#FFFFFF' : 'transparent',
+                    color: loginMode === 'phone' ? '#F97316' : '#64748B',
+                    boxShadow: loginMode === 'phone' ? '0 1px 3px rgba(15,23,42,0.12)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <Smartphone size={14} /> Mobile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setLoginMode('email'); setError(''); }}
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                    fontSize: '0.82rem', fontWeight: 700,
+                    backgroundColor: loginMode === 'email' ? '#FFFFFF' : 'transparent',
+                    color: loginMode === 'email' ? '#F97316' : '#64748B',
+                    boxShadow: loginMode === 'email' ? '0 1px 3px rgba(15,23,42,0.12)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <Mail size={14} /> Email
+                </button>
               </div>
 
 
@@ -213,55 +257,88 @@ export default function LoginModal({
               )}
 
 
-              {/* Phone */}
+              {/* Phone or Email */}
 
-              <div className="form-group">
+              {loginMode === 'phone' ? (
+                <div className="form-group">
 
-                <label className="form-label">
-                  Mobile Number
-                </label>
+                  <label className="form-label">
+                    Mobile Number
+                  </label>
 
-                <div className="input-wrapper">
+                  <div className="input-wrapper">
 
-                  <span
-                    style={{
-                      position: 'absolute',
-                      left: '14px',
-                      fontWeight: '700',
-                      fontSize: '0.95rem',
-                      color: '#334155'
-                    }}
-                  >
-                    +91
-                  </span>
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: '14px',
+                        fontWeight: '700',
+                        fontSize: '0.95rem',
+                        color: '#334155'
+                      }}
+                    >
+                      +91
+                    </span>
 
-                  <input
-                    type="tel"
-                    className="form-input"
-                    placeholder="98765 43210"
-                    maxLength={10}
-                    value={mobileNumber}
-                    onChange={(e) => {
-                      setMobileNumber(
-                        e.target.value.replace(
-                          /\D/g,
-                          ''
-                        )
-                      );
-                      setError('');
-                    }}
-                    style={{
-                      paddingLeft: '56px',
-                      fontSize: '1.05rem',
-                      fontWeight: '600',
-                      letterSpacing: '0.05em'
-                    }}
-                    autoFocus
-                  />
+                    <input
+                      type="tel"
+                      className="form-input"
+                      placeholder="98765 43210"
+                      maxLength={10}
+                      value={mobileNumber}
+                      onChange={(e) => {
+                        setMobileNumber(
+                          e.target.value.replace(
+                            /\D/g,
+                            ''
+                          )
+                        );
+                        setError('');
+                      }}
+                      style={{
+                        paddingLeft: '56px',
+                        fontSize: '1.05rem',
+                        fontWeight: '600',
+                        letterSpacing: '0.05em'
+                      }}
+                      autoFocus
+                    />
+
+                  </div>
 
                 </div>
+              ) : (
+                <div className="form-group">
 
-              </div>
+                  <label className="form-label">
+                    Email Address
+                  </label>
+
+                  <div className="input-wrapper">
+
+                    <Mail size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
+
+                    <input
+                      type="email"
+                      className="form-input"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError('');
+                      }}
+                      style={{
+                        paddingLeft: '38px',
+                        fontSize: '1.05rem',
+                        fontWeight: '600'
+                      }}
+                      autoFocus
+                    />
+
+                  </div>
+
+                </div>
+              )}
 
 
               {/* Send OTP */}
@@ -296,6 +373,7 @@ export default function LoginModal({
                     onOpenRegister?.();
                     setStep('phone');
                     setMobileNumber('');
+                    setEmail('');
                     setError('');
                   }}
                   style={{
@@ -344,7 +422,7 @@ export default function LoginModal({
           ) : (
 
             <OtpVerification
-              mobileNumber={mobileNumber}
+              identifier={identifier}
 
               onBack={() =>
                 setStep('phone')

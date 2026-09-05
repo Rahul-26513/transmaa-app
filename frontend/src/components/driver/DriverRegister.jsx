@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Truck, Smartphone, ArrowRight, ArrowLeft, KeyRound, User, Camera,
+  Truck, Smartphone, Mail, ArrowRight, ArrowLeft, KeyRound, User, Camera,
   CheckCircle2, ShieldCheck
 } from 'lucide-react';
 import * as driverApi from '../../services/driverApi';
@@ -22,7 +22,7 @@ export default function DriverRegister({ onBackToLogin }) {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
-  const [personal, setPersonal] = useState({ name: '', dob: '', gender: 'Male', bio: '' });
+  const [personal, setPersonal] = useState({ name: '', email: '', dob: '', gender: 'Male', bio: '' });
 
   const [experience, setExperience] = useState({
     photo: '',
@@ -82,6 +82,7 @@ export default function DriverRegister({ onBackToLogin }) {
       await driverApi.register({
         name: personal.name,
         phone,
+        email: personal.email,
         dob: personal.dob,
         gender: personal.gender,
         bio: personal.bio,
@@ -240,6 +241,19 @@ export default function DriverRegister({ onBackToLogin }) {
               </div>
 
               <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <div className="input-wrapper">
+                  <Mail size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
+                  <input type="email" className="form-input" placeholder="you@example.com" value={personal.email}
+                    onChange={(e) => setPersonal({ ...personal, email: e.target.value })}
+                    style={{ paddingLeft: '38px' }} />
+                </div>
+                <p style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '4px' }}>
+                  Optional. Lets you log in with email OTP as well as your mobile number.
+                </p>
+              </div>
+
+              <div className="form-group">
                 <label className="form-label">Date Of Birth</label>
                 <input type="date" className="form-input" value={personal.dob}
                   onChange={(e) => setPersonal({ ...personal, dob: e.target.value })} required />
@@ -362,6 +376,9 @@ export default function DriverRegister({ onBackToLogin }) {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', fontSize: '0.85rem', marginBottom: '24px' }}>
+                {personal.email && (
+                  <div style={{ gridColumn: '1 / -1' }}><span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>Email</span><strong>{personal.email}</strong></div>
+                )}
                 <div><span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>Date of Birth</span><strong>{personal.dob}</strong></div>
                 <div><span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>Gender</span><strong>{personal.gender}</strong></div>
                 <div><span style={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>Experience</span><strong>{experience.experienceYears} Years</strong></div>

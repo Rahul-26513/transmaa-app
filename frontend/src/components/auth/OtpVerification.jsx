@@ -9,7 +9,7 @@ import {
 import * as customerApi from '../../services/customerApi';
 
 export default function OtpVerification({
-  mobileNumber,
+  identifier,
   onBack,
   onSuccess,
   onOpenRegister
@@ -17,12 +17,14 @@ export default function OtpVerification({
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [warning, setWarning] = useState('');
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [showRegisterButton, setShowRegisterButton] = useState(false);
 
   const inputRefs = useRef([]);
+  const destination = identifier.phone ? `+91 ${identifier.phone}` : identifier.email;
 
   useEffect(() => {
     let interval = null;
@@ -41,8 +43,11 @@ export default function OtpVerification({
   // Fires a real OTP to the customer's registered email as an addon to the
   // static prototype code below (123456 keeps working on its own either way).
   useEffect(() => {
-    customerApi.requestOtp(mobileNumber).catch((err) => console.error('Send OTP email error:', err));
-  }, [mobileNumber]);
+    customerApi.requestOtp(identifier)
+      .then((data) => setWarning(data.warning || ''))
+      .catch((err) => console.error('Send OTP email error:', err));
+    inputRefs.current[0]?.focus();
+  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
@@ -93,7 +98,7 @@ export default function OtpVerification({
     setShowRegisterButton(false);
 
     try {
-      const data = await customerApi.verifyOtp(mobileNumber, fullOtp);
+      const data = await customerApi.verifyOtp(identifier, fullOtp);
 
       customerApi.persistSession(data.token, data.customer);
 
@@ -131,7 +136,9 @@ export default function OtpVerification({
   const handleResend = () => {
     if (!canResend) return;
 
-    customerApi.requestOtp(mobileNumber).catch((err) => console.error('Resend OTP email error:', err));
+    customerApi.requestOtp(identifier)
+      .then((data) => setWarning(data.warning || ''))
+      .catch((err) => console.error('Resend OTP email error:', err));
 
     setTimer(30);
     setCanResend(false);
@@ -217,7 +224,7 @@ export default function OtpVerification({
               color: '#0F172A'
             }}
           >
-            +91 {mobileNumber}
+            {destination}
           </strong>
         </p>
 
@@ -244,6 +251,27 @@ export default function OtpVerification({
         </div>
 
       </div>
+
+
+      {/* Rate-limit Warning */}
+
+      {warning && (
+        <div
+          style={{
+            backgroundColor: '#FEF3C7',
+            border: '1px solid #FCD34D',
+            color: '#92400E',
+            padding: '10px',
+            borderRadius: '8px',
+            fontSize: '0.82rem',
+            marginBottom: '12px',
+            textAlign: 'center',
+            fontWeight: 600
+          }}
+        >
+          {warning}
+        </div>
+      )}
 
 
       {/* Error Message */}

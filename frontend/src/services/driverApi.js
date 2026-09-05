@@ -58,11 +58,11 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
 export const register = (payload) =>
   request('/api/driver/auth/register', { method: 'POST', body: payload, auth: false });
 
-export const requestOtp = (phone) =>
-  request('/api/driver/auth/request-otp', { method: 'POST', body: { phone }, auth: false });
+export const requestOtp = (identifier) =>
+  request('/api/driver/auth/request-otp', { method: 'POST', body: identifier, auth: false });
 
-export const verifyOtp = (phone, otp) =>
-  request('/api/driver/auth/verify-otp', { method: 'POST', body: { phone, otp }, auth: false });
+export const verifyOtp = (identifier, otp) =>
+  request('/api/driver/auth/verify-otp', { method: 'POST', body: { ...identifier, otp }, auth: false });
 
 export const getMe = () => request('/api/driver/auth/me');
 
@@ -76,6 +76,9 @@ export const getMyLoads = () => request('/api/driver/loads/mine');
 
 export const acceptLoad = (bookingId) =>
   request(`/api/driver/loads/${bookingId}/accept`, { method: 'PUT' });
+
+export const markOnTheWay = (bookingId) =>
+  request(`/api/driver/loads/${bookingId}/on-the-way`, { method: 'PUT' });
 
 export const markDelivered = (bookingId) =>
   request(`/api/driver/loads/${bookingId}/deliver`, { method: 'PUT' });

@@ -71,6 +71,7 @@ export default function VehicleDetailModal({ vehicle, onClose, showToast }) {
                   src={photos[activeImgIndex] || photos[0]}
                   alt={vehicle.makeModel}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
               </div>
 
@@ -90,7 +91,7 @@ export default function VehicleDetailModal({ vehicle, onClose, showToast }) {
                         cursor: 'pointer'
                       }}
                     >
-                      <img src={img} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={img} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
                     </button>
                   ))}
                 </div>
