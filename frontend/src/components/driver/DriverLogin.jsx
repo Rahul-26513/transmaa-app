@@ -103,6 +103,22 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
     }
   };
 
+  const handleOtpPaste = (e) => {
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pasted) return;
+    e.preventDefault();
+
+    const next = [...otp];
+    for (let i = 0; i < 6; i++) {
+      next[i] = pasted[i] || '';
+    }
+    setOtp(next);
+    setError('');
+
+    const lastFilledIndex = Math.min(pasted.length, 6) - 1;
+    otpRefs.current[Math.max(lastFilledIndex, 0)]?.focus();
+  };
+
   const handleVerify = async (e) => {
     e.preventDefault();
 
@@ -319,10 +335,12 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
                     ref={(el) => (otpRefs.current[idx] = el)}
                     type="text"
                     inputMode="numeric"
+                    autoComplete={idx === 0 ? 'one-time-code' : 'off'}
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    onPaste={handleOtpPaste}
                     style={{
                       width: '46px', height: '52px', borderRadius: '10px',
                       border: digit ? '2px solid #F97316' : '1.5px solid #CBD5E1',
