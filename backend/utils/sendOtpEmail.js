@@ -1,26 +1,22 @@
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
 
-let cachedTransporter = null;
+let cachedOAuth2Client = null;
 
-function getTransporter() {
-  if (cachedTransporter) return cachedTransporter;
+// Render (and most free-tier PaaS hosts) block outbound SMTP entirely, so a
+// classic SMTP transporter hangs forever. Sending through the Gmail REST API
+// instead goes over plain HTTPS, which is never blocked, while still sending
+// as the same Gmail account.
+function getOAuth2Client() {
+  if (cachedOAuth2Client) return cachedOAuth2Client;
 
-  cachedTransporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD
-    },
-    // Some hosts block outbound SMTP entirely, which otherwise hangs the
-    // connection forever instead of failing fast. Cap each phase so a
-    // blocked network degrades to "email not delivered" quickly.
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 8000
-  });
+  cachedOAuth2Client = new google.auth.OAuth2(
+    process.env.GMAIL_CLIENT_ID,
+    process.env.GMAIL_CLIENT_SECRET
+  );
+  cachedOAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
 
-  return cachedTransporter;
+  return cachedOAuth2Client;
 }
 
 const PORTAL_COPY = {
@@ -47,18 +43,57 @@ function getThreadAnchor(toEmail, role) {
   return `<otp-${hash}@transmaa.app>`;
 }
 
+function base64UrlEncode(str) {
+  return Buffer.from(str)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function buildRawMessage({ from, to, subject, references, inReplyTo, text, html }) {
+  const boundary = `boundary_${crypto.randomBytes(12).toString("hex")}`;
+
+  const headers = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    "MIME-Version: 1.0",
+    `References: ${references}`,
+    `In-Reply-To: ${inReplyTo}`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`
+  ];
+
+  const body = [
+    "",
+    `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    "",
+    text,
+    `--${boundary}`,
+    'Content-Type: text/html; charset="UTF-8"',
+    "",
+    html,
+    `--${boundary}--`
+  ];
+
+  return base64UrlEncode([...headers, ...body].join("\r\n"));
+}
+
 async function sendOtpEmail(toEmail, otp, context = {}) {
   const { role, name } = context;
+  const clientId = process.env.GMAIL_CLIENT_ID;
+  const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
   const gmailUser = process.env.GMAIL_USER;
-  const gmailPass = process.env.GMAIL_APP_PASSWORD;
 
   if (!toEmail) {
     console.log(`[DEV] OTP ${otp} (no email on file to send to)`);
     return { delivered: false, reason: "no-email" };
   }
 
-  if (!gmailUser || !gmailPass) {
-    console.log(`[DEV] OTP for ${toEmail}: ${otp} (GMAIL_USER/GMAIL_APP_PASSWORD not set, email not actually sent)`);
+  if (!clientId || !clientSecret || !refreshToken || !gmailUser) {
+    console.log(`[DEV] OTP for ${toEmail}: ${otp} (Gmail API credentials not set, email not actually sent)`);
     return { delivered: false, reason: "no-api-key" };
   }
 
@@ -67,33 +102,37 @@ async function sendOtpEmail(toEmail, otp, context = {}) {
   const greetingName = name ? name.split(" ")[0] : "there";
   const threadAnchor = getThreadAnchor(toEmail, role);
 
-  const sendWithTimeout = (mailOptions, timeoutMs = 9000) =>
+  const raw = buildRawMessage({
+    from: `Transmaa Logistics (No-Reply) <${gmailUser}>`,
+    to: toEmail,
+    subject: `Your Transmaa ${portalName} verification code`,
+    references: threadAnchor,
+    inReplyTo: threadAnchor,
+    text: `Hi ${greetingName},\n\nYour Transmaa ${portalName} verification code is ${otp}.\n\n${intro}\n\nThis code expires in ${expiryMinutes} minutes. If you didn't request this, you can ignore this email.\n\nThis is an automated message. Please do not reply to this email.\n\n- Transmaa Logistics`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #0F172A;">
+        <p>Hi ${greetingName},</p>
+        <p>Your Transmaa <strong>${portalName}</strong> verification code is:</p>
+        <p style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #F97316; margin: 16px 0;">${otp}</p>
+        <p style="color: #334155; font-size: 14px;">${intro}</p>
+        <p>This code expires in ${expiryMinutes} minutes.</p>
+        <p style="color: #64748B; font-size: 13px;">If you didn't request this code, you can safely ignore this email.</p>
+        <p style="color: #94A3B8; font-size: 12px; margin-top: 24px;">This is an automated message. Please do not reply to this email.<br>Transmaa Logistics</p>
+      </div>
+    `
+  });
+
+  const sendWithTimeout = (timeoutMs = 10000) =>
     Promise.race([
-      getTransporter().sendMail(mailOptions),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("SMTP send timed out")), timeoutMs))
+      google.gmail({ version: "v1", auth: getOAuth2Client() }).users.messages.send({
+        userId: "me",
+        requestBody: { raw }
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Gmail API send timed out")), timeoutMs))
     ]);
 
   try {
-    await sendWithTimeout({
-      from: `Transmaa Logistics (No-Reply) <${gmailUser}>`,
-      to: toEmail,
-      subject: `Your Transmaa ${portalName} verification code`,
-      references: threadAnchor,
-      inReplyTo: threadAnchor,
-      text: `Hi ${greetingName},\n\nYour Transmaa ${portalName} verification code is ${otp}.\n\n${intro}\n\nThis code expires in ${expiryMinutes} minutes. If you didn't request this, you can ignore this email.\n\nThis is an automated message. Please do not reply to this email.\n\n- Transmaa Logistics`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #0F172A;">
-          <p>Hi ${greetingName},</p>
-          <p>Your Transmaa <strong>${portalName}</strong> verification code is:</p>
-          <p style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #F97316; margin: 16px 0;">${otp}</p>
-          <p style="color: #334155; font-size: 14px;">${intro}</p>
-          <p>This code expires in ${expiryMinutes} minutes.</p>
-          <p style="color: #64748B; font-size: 13px;">If you didn't request this code, you can safely ignore this email.</p>
-          <p style="color: #94A3B8; font-size: 12px; margin-top: 24px;">This is an automated message. Please do not reply to this email.<br>Transmaa Logistics</p>
-        </div>
-      `
-    });
-
+    await sendWithTimeout();
     return { delivered: true };
   } catch (err) {
     console.error(`[OTP EMAIL] Failed to send to ${toEmail}: ${err.message}`);
