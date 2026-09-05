@@ -19,7 +19,9 @@ export default function DriverRegister({ onBackToLogin }) {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [verifyMode, setVerifyMode] = useState('phone'); // phone | email
   const [phone, setPhone] = useState('');
+  const [verifyEmail, setVerifyEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
   const [personal, setPersonal] = useState({ name: '', email: '', dob: '', gender: 'Male', bio: '' });
@@ -36,11 +38,18 @@ export default function DriverRegister({ onBackToLogin }) {
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    if (phone.length !== 10) {
+    if (verifyMode === 'phone' && phone.length !== 10) {
       setError('Please enter a valid 10-digit mobile number.');
       return;
     }
+    if (verifyMode === 'email' && !verifyEmail.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     setError('');
+    if (verifyMode === 'email') {
+      setPersonal((prev) => ({ ...prev, email: verifyEmail }));
+    }
     setStep(1.5);
   };
 
@@ -58,6 +67,10 @@ export default function DriverRegister({ onBackToLogin }) {
     e.preventDefault();
     if (!personal.name.trim() || !personal.dob) {
       setError('Please fill in your name and date of birth.');
+      return;
+    }
+    if (verifyMode === 'email' && phone.length !== 10) {
+      setError('Please enter a valid 10-digit mobile number.');
       return;
     }
     setError('');
@@ -157,24 +170,73 @@ export default function DriverRegister({ onBackToLogin }) {
           {step === 1 && (
             <form onSubmit={handleSendOtp}>
               <h3 className="title-md" style={{ marginBottom: '4px' }}>Registration</h3>
-              <p className="subtitle" style={{ marginBottom: '20px' }}>Step 1: Verify your mobile number</p>
+              <p className="subtitle" style={{ marginBottom: '16px' }}>Step 1: Verify your mobile number or email</p>
 
-              <div className="form-group">
-                <label className="form-label">Mobile Number</label>
-                <div className="input-wrapper">
-                  <Smartphone size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
-                  <span style={{ position: 'absolute', left: '38px', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>+91</span>
-                  <input
-                    type="tel"
-                    className="form-input"
-                    maxLength={10}
-                    value={phone}
-                    onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }}
-                    style={{ paddingLeft: '74px', fontWeight: 600 }}
-                    autoFocus
-                  />
-                </div>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', backgroundColor: '#F1F5F9', padding: '4px', borderRadius: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setVerifyMode('phone'); setError(''); }}
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                    fontSize: '0.82rem', fontWeight: 700,
+                    backgroundColor: verifyMode === 'phone' ? '#FFFFFF' : 'transparent',
+                    color: verifyMode === 'phone' ? '#F97316' : '#64748B',
+                    boxShadow: verifyMode === 'phone' ? '0 1px 3px rgba(15,23,42,0.12)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <Smartphone size={14} /> Mobile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setVerifyMode('email'); setError(''); }}
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                    fontSize: '0.82rem', fontWeight: 700,
+                    backgroundColor: verifyMode === 'email' ? '#FFFFFF' : 'transparent',
+                    color: verifyMode === 'email' ? '#F97316' : '#64748B',
+                    boxShadow: verifyMode === 'email' ? '0 1px 3px rgba(15,23,42,0.12)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <Mail size={14} /> Email
+                </button>
               </div>
+
+              {verifyMode === 'phone' ? (
+                <div className="form-group">
+                  <label className="form-label">Mobile Number</label>
+                  <div className="input-wrapper">
+                    <Smartphone size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
+                    <span style={{ position: 'absolute', left: '38px', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>+91</span>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setError(''); }}
+                      style={{ paddingLeft: '74px', fontWeight: 600 }}
+                      autoFocus
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="form-group">
+                  <label className="form-label">Email Address</label>
+                  <div className="input-wrapper">
+                    <Mail size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
+                    <input
+                      type="email"
+                      className="form-input"
+                      placeholder="you@example.com"
+                      value={verifyEmail}
+                      onChange={(e) => { setVerifyEmail(e.target.value); setError(''); }}
+                      style={{ paddingLeft: '38px', fontWeight: 600 }}
+                      autoFocus
+                    />
+                  </div>
+                </div>
+              )}
 
               <button type="submit" className="btn btn-primary btn-full btn-lg">
                 Get OTP <ArrowRight size={18} />
@@ -196,8 +258,10 @@ export default function DriverRegister({ onBackToLogin }) {
                 <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>
                   <KeyRound size={28} color="#F97316" />
                 </div>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A' }}>Verify your Phone Number</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '4px' }}>Sent to +91 {phone}</p>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A' }}>Verify OTP</h4>
+                <p style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '4px' }}>
+                  Sent to {verifyMode === 'phone' ? `+91 ${phone}` : verifyEmail}
+                </p>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '20px' }}>
@@ -240,17 +304,38 @@ export default function DriverRegister({ onBackToLogin }) {
                   onChange={(e) => setPersonal({ ...personal, name: e.target.value })} required />
               </div>
 
+              {verifyMode === 'email' && (
+                <div className="form-group">
+                  <label className="form-label">Mobile Number</label>
+                  <div className="input-wrapper">
+                    <Smartphone size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
+                    <span style={{ position: 'absolute', left: '38px', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>+91</span>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                      style={{ paddingLeft: '74px', fontWeight: 600 }}
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="form-label">Email Address</label>
                 <div className="input-wrapper">
                   <Mail size={17} color="#94A3B8" style={{ position: 'absolute', left: '14px' }} />
                   <input type="email" className="form-input" placeholder="you@example.com" value={personal.email}
                     onChange={(e) => setPersonal({ ...personal, email: e.target.value })}
-                    style={{ paddingLeft: '38px' }} />
+                    style={{ paddingLeft: '38px' }} required={verifyMode === 'email'} />
                 </div>
-                <p style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '4px' }}>
-                  Optional. Lets you log in with email OTP as well as your mobile number.
-                </p>
+                {verifyMode === 'phone' && (
+                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '4px' }}>
+                    Optional. Lets you log in with email OTP as well as your mobile number.
+                  </p>
+                )}
               </div>
 
               <div className="form-group">
