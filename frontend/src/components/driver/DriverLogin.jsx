@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Truck, Smartphone, ArrowRight, ShieldCheck, KeyRound, ArrowLeft } from 'lucide-react';
 import * as driverApi from '../../services/driverApi';
 import Footer from '../common/Footer';
@@ -10,6 +10,7 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
   const [error, setError] = useState('');
   const [popup, setPopup] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const inputRefs = useRef([]);
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -42,6 +43,32 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
     next[index] = value.slice(-1);
     setOtp(next);
     setError('');
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e) => {
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pasted) return;
+    e.preventDefault();
+
+    const next = [...otp];
+    for (let i = 0; i < 6; i++) {
+      next[i] = pasted[i] || '';
+    }
+    setOtp(next);
+    setError('');
+
+    const lastFilledIndex = Math.min(pasted.length, 6) - 1;
+    inputRefs.current[Math.max(lastFilledIndex, 0)]?.focus();
   };
 
   const handleVerify = async (e) => {
@@ -192,11 +219,15 @@ export default function DriverLogin({ onLoginSuccess, onOpenRegister }) {
                 {otp.map((digit, idx) => (
                   <input
                     key={idx}
+                    ref={(el) => (inputRefs.current[idx] = el)}
                     type="text"
                     inputMode="numeric"
+                    autoComplete={idx === 0 ? 'one-time-code' : 'off'}
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    onPaste={handleOtpPaste}
                     style={{
                       width: '46px', height: '52px', borderRadius: '10px',
                       border: digit ? '2px solid #F97316' : '1.5px solid #CBD5E1',
