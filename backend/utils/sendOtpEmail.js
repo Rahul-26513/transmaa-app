@@ -11,7 +11,13 @@ function getTransporter() {
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD
-    }
+    },
+    // Some hosts block outbound SMTP entirely, which otherwise hangs the
+    // connection forever instead of failing fast. Cap each phase so a
+    // blocked network degrades to "email not delivered" quickly.
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 8000
   });
 
   return cachedTransporter;
@@ -61,8 +67,14 @@ async function sendOtpEmail(toEmail, otp, context = {}) {
   const greetingName = name ? name.split(" ")[0] : "there";
   const threadAnchor = getThreadAnchor(toEmail, role);
 
+  const sendWithTimeout = (mailOptions, timeoutMs = 9000) =>
+    Promise.race([
+      getTransporter().sendMail(mailOptions),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("SMTP send timed out")), timeoutMs))
+    ]);
+
   try {
-    await getTransporter().sendMail({
+    await sendWithTimeout({
       from: `Transmaa Logistics (No-Reply) <${gmailUser}>`,
       to: toEmail,
       subject: `Your Transmaa ${portalName} verification code`,
